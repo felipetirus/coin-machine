@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "4b5ecb1c-6ddc-4823-914f-7ef62cbe77d4",
+		"name": "CoinMachine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "267785"
+	},
+	"item": [
+		{
+			"name": "total-coins",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/api/machine/total-coins"
+			},
+			"response": []
+		},
+		{
+			"name": "transaction-all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/api/machine/transaction/all"
+			},
+			"response": []
+		},
+		{
+			"name": "change-bills",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[53]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/api/machine/change-bills"
+			},
+			"response": []
+		},
+		{
+			"name": "add-coins",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    { \"amount\": 3,\r\n      \"quantity\": 3\r\n      }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/api/machine/add-coins"
+			},
+			"response": []
+		}
+	]
+}
