@@ -19,9 +19,12 @@ public class MoneyUtils {
         return listofBills.stream().reduce(0, (a, b) -> a + b);
     }
 
-    public static List<MachineCoins> getAmountInCoins(List<MachineCoins> listCoins, Integer amount) {
+    public static List<MachineCoins> getAmountInCoins(List<MachineCoins> listCoins, Integer amount, Boolean mostCoins) {
         BigDecimal amountCalc = BigDecimal.valueOf(amount);
         List<MachineCoins> returnAmount = new ArrayList<>();
+        if(mostCoins) {
+            Collections.sort(listCoins, (s1, s2) -> s1.getAmount().compareTo(s2.getAmount()));
+        }
         for (MachineCoins bankNote: listCoins) {
             if (bankNote.getQuantity() > 0 && amountCalc.compareTo(bankNote.getAmount()) >= 0) {
                 int neededNotes = amountCalc.divide(bankNote.getAmount()).intValue();

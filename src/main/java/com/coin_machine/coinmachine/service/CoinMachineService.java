@@ -11,7 +11,7 @@ public interface CoinMachineService {
     BigDecimal getTotalMachine();
     List<MachineCoins> getAvailableBankCoins();
 
-    List<MachineCoins> changeBills(List<Integer> listOfBills);
+    List<MachineCoins> changeBills(List<Integer> listOfBills, Boolean mostCoins);
 
     void addCoins(List<NewCoins> listCoins);
 

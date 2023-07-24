@@ -40,9 +40,9 @@ public class CoinMachineServiceImpl implements CoinMachineService {
         machineCoinsRepository.saveAll(updatedEntity);
     }
 
-    public List<MachineCoins> changeBills(List<Integer> listOfBills) {
+    public List<MachineCoins> changeBills(List<Integer> listOfBills, Boolean mostCoins) {
         Integer totalAmount = MoneyUtils.totalAmountBills(listOfBills);
-        List<MachineCoins> coins = MoneyUtils.getAmountInCoins(getAvailableBankCoins(), totalAmount);
+        List<MachineCoins> coins = MoneyUtils.getAmountInCoins(getAvailableBankCoins(), totalAmount, mostCoins);
         Transaction transaction = MoneyUtils.createTransaction(listOfBills, coins);
         removeCoinsAndInsertTransaction(coins, transaction);
         return coins;

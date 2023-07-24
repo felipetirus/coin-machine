@@ -23,6 +23,7 @@ public class MoneyUtilsTest {
                 new MachineCoins(BigDecimal.valueOf(0.01), 100, null)
         );
     }
+
     @Test
     public void totalAmountBillsTest() {
         Integer total = MoneyUtils.totalAmountBills(Arrays.asList(50, 100, 10, 5));
@@ -30,19 +31,31 @@ public class MoneyUtilsTest {
     }
 
     @Test
-    public void getAmountInCoinsTest() {
-        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, 5);
+    public void getAmountInCoinsGettingFromHigherTest() {
+        Collections.sort(listCoins, (s1, s2) -> s2.getAmount().compareTo(s1.getAmount()));
+        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, 5, false);
         assertNotNull(listChangeCoins);
         assertEquals(1, listChangeCoins.size());
         assertEquals(BigDecimal.valueOf(0.25), listChangeCoins.get(0).getAmount());
         assertEquals(20, listChangeCoins.get(0).getQuantity());
+    }
+
+    @Test
+    public void getAmountInCoinsGettingFromLowerTest() {
+        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, 5, true);
+        assertNotNull(listChangeCoins);
+        assertEquals(2, listChangeCoins.size());
+        assertEquals(BigDecimal.valueOf(0.01), listChangeCoins.get(0).getAmount());
+        assertEquals(100, listChangeCoins.get(0).getQuantity());
+        assertEquals(BigDecimal.valueOf(0.05), listChangeCoins.get(1).getAmount());
+        assertEquals(80, listChangeCoins.get(1).getQuantity());
     }
     @Test
     public void getAmountInCoinsTestError() {
 
         OutOfMoneyException thrown = assertThrows(
                 OutOfMoneyException.class,
-                () -> MoneyUtils.getAmountInCoins(listCoins, 100)
+                () -> MoneyUtils.getAmountInCoins(listCoins, 100, false)
         );
 
         assertTrue(thrown.getMessage().contains("The machine only have 41.00 and you want 100.00."));

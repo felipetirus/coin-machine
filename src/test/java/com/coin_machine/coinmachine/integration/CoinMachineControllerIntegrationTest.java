@@ -54,6 +54,20 @@ public class CoinMachineControllerIntegrationTest {
     }
 
     @Test
+    @Order(3)
+    public void changeCoins_send_5_mostCoins_Success() throws Exception {
+        mockMvc.perform(post("/machine/change-bills?mostCoins=true")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("[5]"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].amount").value(0.01))
+                .andExpect(jsonPath("$[0].quantity").value(100))
+                .andExpect(jsonPath("$[1].amount").value(0.05))
+                .andExpect(jsonPath("$[1].quantity").value(80));
+    }
+
+    @Test
     public void changeCoins_invalidNote_errorMessage() throws Exception {
         mockMvc.perform(post("/machine/change-bills")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,11 +86,11 @@ public class CoinMachineControllerIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void getAllTransactions_checkNewAmount_Success() throws Exception {
         mockMvc.perform(get("/machine/transaction/all"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].listBills[0]").value(5))
                 .andExpect(jsonPath("$[0].listBills[1]").value(10))
                 .andExpect(jsonPath("$[0].listCoins", Matchers.hasKey("0.25")))
@@ -84,7 +98,7 @@ public class CoinMachineControllerIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void addCoins_25x100coins_success() throws Exception {
         List<NewCoins> listOfCoins = new ArrayList<>();
         listOfCoins.add(new NewCoins(25, 100));
@@ -93,7 +107,7 @@ public class CoinMachineControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(listOfCoins)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("New total of coins is 51.00"));
+                .andExpect(jsonPath("$").value("New total of coins is 46.00"));
     }
 
     @Test

@@ -11,7 +11,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "{{base_url}}/api/machine/total-coins"
+				"url": "localhost:8080/api/machine/total-coins"
 			},
 			"response": []
 		},
@@ -20,7 +20,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "{{base_url}}/api/machine/transaction/all"
+				"url": "localhost:8080/api/machine/transaction/all"
 			},
 			"response": []
 		},
@@ -31,14 +31,31 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[53]",
+					"raw": "[10, 5]",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{base_url}}/api/machine/change-bills"
+				"url": {
+					"raw": "localhost:8080/api/machine/change-bills?mostCoins=false",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"machine",
+						"change-bills"
+					],
+					"query": [
+						{
+							"key": "mostCoins",
+							"value": "false"
+						}
+					]
+				}
 			},
 			"response": []
 		},
@@ -49,14 +66,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n    { \"amount\": 3,\r\n      \"quantity\": 3\r\n      }\r\n]",
+					"raw": "[\r\n    { \r\n        \"amount\": 25,\r\n        \"quantity\": 100\r\n    },\r\n    { \r\n        \"amount\": 10,\r\n        \"quantity\": 100\r\n    }\r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{base_url}}/api/machine/add-coins"
+				"url": "localhost:8080/api/machine/add-coins"
 			},
 			"response": []
 		}

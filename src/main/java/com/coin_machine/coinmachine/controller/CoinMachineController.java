@@ -40,9 +40,9 @@ public class CoinMachineController
             @Valid
             @RequestBody
             @NotEmpty(message = "Input bills list cannot be empty")
-            List<@ValidMoney(moneyType= ValidMoney.MoneyType.NOTES) Integer> listOfBills) {
+            List<@ValidMoney(moneyType= ValidMoney.MoneyType.NOTES) Integer> listOfBills, @RequestParam(defaultValue = "false") Boolean mostCoins) {
         log.info("Changing notes");
-        return ResponseEntity.ok(coinMachineService.changeBills(listOfBills));
+        return ResponseEntity.ok(coinMachineService.changeBills(listOfBills, mostCoins));
     }
 
     @GetMapping(value = "/transaction/all", produces = MediaType.APPLICATION_JSON_VALUE)
