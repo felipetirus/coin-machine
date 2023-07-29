@@ -7,6 +7,7 @@ import com.coin_machine.coinmachine.model.NewCoins;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -23,14 +24,14 @@ public class MoneyUtils {
         BigDecimal amountCalc = BigDecimal.valueOf(amount);
         List<MachineCoins> returnAmount = new ArrayList<>();
         if(mostCoins) {
-            Collections.sort(listCoins, (s1, s2) -> s1.getAmount().compareTo(s2.getAmount()));
+            Collections.reverse(listCoins);
         }
-        for (MachineCoins bankNote: listCoins) {
-            if (bankNote.getQuantity() > 0 && amountCalc.compareTo(bankNote.getAmount()) >= 0) {
-                int neededNotes = amountCalc.divide(bankNote.getAmount()).intValue();
-                int availableNotes = numAvailableNotes(neededNotes, bankNote);
-                amountCalc = amountCalc.subtract(bankNote.getAmount().multiply(BigDecimal.valueOf(availableNotes))) ;
-                returnAmount.add(new MachineCoins(bankNote.getAmount(), availableNotes, LocalDateTime.now()));
+        for (MachineCoins bankCoins: listCoins) {
+            if (bankCoins.getQuantity() > 0 && amountCalc.compareTo(bankCoins.getAmount()) >= 0) {
+                int neededCoins = amountCalc.divide(bankCoins.getAmount(), RoundingMode.DOWN).intValue();
+                int availableNotes = numAvailableNotes(neededCoins, bankCoins);
+                amountCalc = amountCalc.subtract(bankCoins.getAmount().multiply(BigDecimal.valueOf(availableNotes))) ;
+                returnAmount.add(new MachineCoins(bankCoins.getAmount(), availableNotes, LocalDateTime.now()));
             }
             if(amountCalc.compareTo(listCoins.get(listCoins.size()-1).getAmount()) < 0){
                 break;
