@@ -28,14 +28,14 @@ public class MoneyUtilsTest {
 
     @Test
     public void totalAmountBillsTest() {
-        Integer total = MoneyUtils.totalAmountBills(Arrays.asList(50, 100, 10, 5));
-        assertEquals(total, 165);
+        BigDecimal total = MoneyUtils.totalAmountBills(Arrays.asList(50, 100, 10, 5));
+        assertEquals(total, BigDecimal.valueOf(165));
     }
 
     @Test
     public void getAmountInCoinsGettingFromHigherTest() {
         Collections.sort(listCoins, (s1, s2) -> s2.getAmount().compareTo(s1.getAmount()));
-        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, 5, false);
+        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, BigDecimal.valueOf(5), false);
         assertNotNull(listChangeCoins);
         assertEquals(3, listChangeCoins.size());
         assertEquals(BigDecimal.valueOf(0.34), listChangeCoins.get(0).getAmount());
@@ -50,7 +50,7 @@ public class MoneyUtilsTest {
 
     @Test
     public void getAmountInCoinsGettingFromLowerTest() {
-        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, 5, true);
+        List<MachineCoins> listChangeCoins =  MoneyUtils.getAmountInCoins(listCoins, BigDecimal.valueOf(5), true);
         assertNotNull(listChangeCoins);
         assertEquals(2, listChangeCoins.size());
         assertEquals(BigDecimal.valueOf(0.01), listChangeCoins.get(0).getAmount());
@@ -63,7 +63,7 @@ public class MoneyUtilsTest {
 
         OutOfMoneyException thrown = assertThrows(
                 OutOfMoneyException.class,
-                () -> MoneyUtils.getAmountInCoins(listCoins, 150, false)
+                () -> MoneyUtils.validateMachineAmount(BigDecimal.valueOf(150), listCoins)
         );
 
         assertEquals("The machine only have 108.00 and you want 150.00.", thrown.getMessage());

@@ -2,6 +2,7 @@ package com.coin_machine.coinmachine.utils;
 
 import com.coin_machine.coinmachine.entity.MachineCoins;
 import com.coin_machine.coinmachine.entity.Transaction;
+import com.coin_machine.coinmachine.exception.NoChangeFoundException;
 import com.coin_machine.coinmachine.exception.OutOfMoneyException;
 import com.coin_machine.coinmachine.model.NewCoins;
 import lombok.extern.slf4j.Slf4j;
@@ -16,30 +17,51 @@ import java.util.stream.Collectors;
 public class MoneyUtils {
 
     public static final BigDecimal HUNDRED = new BigDecimal(100);
-    public static Integer totalAmountBills(List<Integer> listofBills) {
-        return listofBills.stream().reduce(0, (a, b) -> a + b);
+    public static BigDecimal totalAmountBills(List<Integer> listofBills) {
+        return  BigDecimal.valueOf(listofBills.stream().reduce(0, (a, b) -> a + b));
     }
 
-    public static List<MachineCoins> getAmountInCoins(List<MachineCoins> listCoins, Integer amount, Boolean mostCoins) {
-        BigDecimal amountCalc = BigDecimal.valueOf(amount);
-        List<MachineCoins> returnAmount = new ArrayList<>();
+    public static List<MachineCoins> getAmountInCoins(List<MachineCoins> listCoins, BigDecimal totalAmount, Boolean mostCoins) {
+        List<MachineCoins> returnAmount = null;
         if(mostCoins) {
             Collections.reverse(listCoins);
         }
-        for (MachineCoins bankCoins: listCoins) {
-            if (bankCoins.getQuantity() > 0 && amountCalc.compareTo(bankCoins.getAmount()) >= 0) {
-                int neededCoins = amountCalc.divide(bankCoins.getAmount(), RoundingMode.DOWN).intValue();
-                int availableNotes = numAvailableCoins(neededCoins, bankCoins);
-                amountCalc = amountCalc.subtract(bankCoins.getAmount().multiply(BigDecimal.valueOf(availableNotes))) ;
-                returnAmount.add(new MachineCoins(bankCoins.getAmount(), availableNotes, LocalDateTime.now()));
-            }
-            if(amountCalc.compareTo(listCoins.get(listCoins.size()-1).getAmount()) < 0){
+        BigDecimal total = null;
+        while (!listCoins.isEmpty()) {
+            returnAmount = findCombination(listCoins, totalAmount);
+            total = getTotalAmountList(returnAmount);
+            if (total.compareTo(totalAmount) == 0) {
                 break;
             }
+            removeCoinList(listCoins, returnAmount);
         }
-        if (amountCalc.compareTo(BigDecimal.ZERO) != 0) {
-            log.error("Out of money Exception");
-            throw new OutOfMoneyException(BigDecimal.valueOf(amount), amountCalc);
+
+        if (total.compareTo(totalAmount) != 0) {
+            log.error("No combination found!");
+            throw new NoChangeFoundException();
+        }
+        return returnAmount;
+    }
+
+    private static void removeCoinList(List<MachineCoins> listCoins, List<MachineCoins> currentList) {
+        listCoins.get(0).setQuantity(currentList.get(0).getQuantity() -1);
+        if (listCoins.get(0).getQuantity() <= 0) {
+            listCoins.remove(0);
+        }
+    }
+
+    private static List<MachineCoins> findCombination(List<MachineCoins> listCoins, BigDecimal totalAmount) {
+        List<MachineCoins> returnAmount = new ArrayList<>();
+        for (MachineCoins bankCoins: listCoins) {
+            if (bankCoins.getQuantity() > 0 && totalAmount.compareTo(bankCoins.getAmount()) >= 0) {
+                int neededCoins = totalAmount.divide(bankCoins.getAmount(), RoundingMode.DOWN).intValue();
+                int availableNotes = numAvailableCoins(neededCoins, bankCoins);
+                totalAmount = totalAmount.subtract(bankCoins.getAmount().multiply(BigDecimal.valueOf(availableNotes))) ;
+                returnAmount.add(new MachineCoins(bankCoins.getAmount(), availableNotes, LocalDateTime.now()));
+            }
+            if(totalAmount.compareTo(listCoins.get(listCoins.size()-1).getAmount()) < 0){
+                break;
+            }
         }
         return returnAmount;
     }
@@ -83,6 +105,21 @@ public class MoneyUtils {
 
     public static BigDecimal moneyToBigDecimal(Integer value){
         return BigDecimal.valueOf(value).divide(HUNDRED);
+    }
+
+    public static BigDecimal getTotalAmountList(List<MachineCoins> allCoinsMachine) {
+       return allCoinsMachine.stream()
+                .reduce(BigDecimal.ZERO, (totalAmount, note) ->
+                                totalAmount.add(note.getAmount().multiply(BigDecimal.valueOf(note.getQuantity()))),
+                        BigDecimal::add);
+    }
+
+    public static void validateMachineAmount(BigDecimal totalAmount, List<MachineCoins> allCoins) {
+        BigDecimal totalMachine = MoneyUtils.getTotalAmountList(allCoins);
+        if (totalAmount.compareTo(totalMachine) > 0) {
+            log.error("Out of money Exception");
+            throw new OutOfMoneyException(totalMachine, totalAmount);
+        }
     }
 
 }

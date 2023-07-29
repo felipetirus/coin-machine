@@ -54,8 +54,8 @@ public class CoinMachineControllerIntegrationTest {
                 .andExpect(jsonPath("$[1].quantity").value(4));
     }
 
-//    @Test
-//    @Order(3)
+    @Test
+    @Order(3)
     public void changeCoins_send_5_mostCoins_Success() throws Exception {
         mockMvc.perform(post("/machine/change-bills?mostCoins=true")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,9 +63,9 @@ public class CoinMachineControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].amount").value(0.01))
-                .andExpect(jsonPath("$[0].quantity").value(96))
+                .andExpect(jsonPath("$[0].quantity").value(95))
                 .andExpect(jsonPath("$[1].amount").value(0.05))
-                .andExpect(jsonPath("$[1].quantity").value(80));
+                .andExpect(jsonPath("$[1].quantity").value(81));
     }
 
     @Test
@@ -91,9 +91,10 @@ public class CoinMachineControllerIntegrationTest {
     public void getAllTransactions_checkNewAmount_Success() throws Exception {
         mockMvc.perform(get("/machine/transaction/all"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].listBills[0]").value(5))
-                .andExpect(jsonPath("$[0].listBills[1]").value(10));
+                .andExpect(jsonPath("$[0].listBills[1]").value(10))
+                .andExpect(jsonPath("$[1].listBills[0]").value(5));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class CoinMachineControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(listOfCoins)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("New total of coins is 118.00"));
+                .andExpect(jsonPath("$").value("New total of coins is 112.99"));
     }
 
     @Test
