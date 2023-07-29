@@ -29,7 +29,7 @@ public class MoneyUtils {
         for (MachineCoins bankCoins: listCoins) {
             if (bankCoins.getQuantity() > 0 && amountCalc.compareTo(bankCoins.getAmount()) >= 0) {
                 int neededCoins = amountCalc.divide(bankCoins.getAmount(), RoundingMode.DOWN).intValue();
-                int availableNotes = numAvailableNotes(neededCoins, bankCoins);
+                int availableNotes = numAvailableCoins(neededCoins, bankCoins);
                 amountCalc = amountCalc.subtract(bankCoins.getAmount().multiply(BigDecimal.valueOf(availableNotes))) ;
                 returnAmount.add(new MachineCoins(bankCoins.getAmount(), availableNotes, LocalDateTime.now()));
             }
@@ -44,8 +44,8 @@ public class MoneyUtils {
         return returnAmount;
     }
 
-    public static Integer numAvailableNotes(Integer neededNoted, MachineCoins currentNotes) {
-        return neededNoted < currentNotes.getQuantity() ? neededNoted : currentNotes.getQuantity();
+    public static Integer numAvailableCoins(Integer neededCoins, MachineCoins currentCoins) {
+        return neededCoins < currentCoins.getQuantity() ? neededCoins : currentCoins.getQuantity();
     }
 
     public static Transaction createTransaction(List<Integer> listOfBills, List<MachineCoins> coins) {

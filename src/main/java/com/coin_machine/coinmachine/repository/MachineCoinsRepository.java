@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MachineCoinsRepository extends JpaRepository<MachineCoins, Integer> {
-    public List<MachineCoins> findAllByOrderByAmountDesc();
+    List<MachineCoins> findAllByOrderByAmountDesc();
 }

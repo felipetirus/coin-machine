@@ -3,7 +3,6 @@ package com.coin_machine.coinmachine.integration;
 
 import com.coin_machine.coinmachine.model.NewCoins;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

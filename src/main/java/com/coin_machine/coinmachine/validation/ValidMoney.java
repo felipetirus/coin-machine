@@ -18,11 +18,8 @@ import java.lang.annotation.Target;
 public @interface ValidMoney {
 
     MoneyType moneyType();
-    //error message
     public String message() default "The Bill value is invalid.";
-    //represents group of constraints
     public Class<?>[] groups() default {};
-    //represents additional information about annotation
     public Class<? extends Payload>[] payload() default {};
 
     public enum MoneyType {
